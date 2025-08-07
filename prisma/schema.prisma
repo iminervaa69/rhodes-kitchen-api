@@ -1,0 +1,337 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model users {
+  id               String             @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  email            String             @unique @db.VarChar
+  password_hash    String             @db.VarChar
+  role             String             @db.VarChar
+  first_name       String?            @db.VarChar
+  last_name        String?            @db.VarChar
+  phone            String?            @db.VarChar
+  created_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  deleted_at       DateTime?          @db.Timestamptz(6)
+  customer_profile customer_profiles?
+  employee_profile employee_profiles?
+  order_timeline   order_timeline[]
+  orders           orders[]
+  refresh_tokens   refresh_tokens[] 
+
+  @@index([email], map: "idx_users_email")
+  @@index([role], map: "idx_users_role")
+  @@map("users")
+}
+
+model customer_profiles {
+  user_id                  String    @id @db.Uuid
+  customer_id              String    @unique @db.VarChar
+  delivery_addresses       Json?
+  loyalty_points           Int?      @default(0)
+  preferred_payment_method String?   @db.VarChar
+  dietary_restrictions     String[]
+  created_at               DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime? @default(now()) @db.Timestamptz(6)
+  user                     users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("customer_profiles")
+}
+
+model employee_profiles {
+  user_id     String    @id @db.Uuid
+  employee_id String    @unique @db.VarChar
+  hire_date   DateTime  @db.Date
+  hourly_rate Decimal?  @db.Decimal(10, 2)
+  department  String?   @db.VarChar
+  is_active   Boolean?  @default(true)
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+  user        users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("employee_profiles")
+}
+
+model categories {
+  id                   String                 @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  category_id          String                 @unique @db.VarChar
+  name                 String                 @db.VarChar
+  description          String?
+  image_url            String?                @db.VarChar
+  display_order        Int?
+  is_active            Boolean?               @default(true)
+  created_at           DateTime?              @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?              @default(now()) @db.Timestamptz(6)
+  deleted_at           DateTime?              @db.Timestamptz(6)
+  menu_item_categories menu_item_categories[]
+
+  @@map("categories")
+}
+
+model menu_items {
+  id                   String                  @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  menu_item_id         String                  @unique @db.VarChar
+  name                 String                  @db.VarChar
+  description          String?
+  price                Decimal                 @db.Decimal(10, 2)
+  category             String?                 @db.VarChar
+  is_available         Boolean?                @default(true)
+  created_at           DateTime?               @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?               @default(now()) @db.Timestamptz(6)
+  deleted_at           DateTime?               @db.Timestamptz(6)
+  menu_item_categories menu_item_categories[]
+  images               menu_item_images[]
+  ingredients          menu_item_ingredients[]
+  variants             menu_item_variants[]
+  order_items          order_items[]
+
+  @@index([is_available], map: "idx_menu_items_available")
+  @@index([category], map: "idx_menu_items_category")
+  @@map("menu_items")
+}
+
+model menu_item_variants {
+  id              String        @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  menu_variant_id String        @unique @db.VarChar
+  menu_item_id    String?       @db.Uuid
+  variant_name    String        @db.VarChar
+  variant_type    String        @db.VarChar
+  price_modifier  Decimal?      @default(0) @db.Decimal(10, 2)
+  is_default      Boolean?      @default(false)
+  created_at      DateTime?     @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime?     @default(now()) @db.Timestamptz(6)
+  menu_item       menu_items?   @relation(fields: [menu_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  order_items     order_items[]
+
+  @@map("menu_item_variants")
+}
+
+model orders {
+  id                   String           @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  order_id             String           @unique @db.VarChar
+  order_type           String           @db.VarChar
+  orderer_name         String           @db.VarChar
+  customer_id          String?          @db.Uuid
+  table_id             String?          @db.Uuid
+  status               String           @default("pending") @db.VarChar
+  total_amount         Decimal?         @db.Decimal(10, 2)
+  special_instructions String?
+  confirmed_at         DateTime?        @db.Timestamptz(6)
+  preparing_at         DateTime?        @db.Timestamptz(6)
+  ready_at             DateTime?        @db.Timestamptz(6)
+  served_at            DateTime?        @db.Timestamptz(6)
+  paid_at              DateTime?        @db.Timestamptz(6)
+  completed_at         DateTime?        @db.Timestamptz(6)
+  estimated_ready_time DateTime?        @db.Timestamptz(6)
+  created_at           DateTime?        @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?        @default(now()) @db.Timestamptz(6)
+  order_items          order_items[]
+  order_timeline       order_timeline[]
+  customer             users?           @relation(fields: [customer_id], references: [id], onUpdate: NoAction)
+  table                tables?          @relation(fields: [table_id], references: [id], onUpdate: NoAction)
+  transactions         transactions[]
+
+  @@index([created_at], map: "idx_orders_created_at")
+  @@index([customer_id], map: "idx_orders_customer_id")
+  @@index([status], map: "idx_orders_status")
+  @@map("orders")
+}
+
+model order_items {
+  id                       String                     @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  order_id                 String?                    @db.Uuid
+  menu_item_id             String?                    @db.Uuid
+  variant_id               String?                    @db.Uuid
+  quantity                 Int
+  unit_price               Decimal                    @db.Decimal(10, 2)
+  item_notes               String?
+  status                   String?                    @default("pending") @db.VarChar
+  created_at               DateTime?                  @default(now()) @db.Timestamptz(6)
+  ingredient_usage_history ingredient_usage_history[]
+  menu_item                menu_items?                @relation(fields: [menu_item_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  order                    orders?                    @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  variant                  menu_item_variants?        @relation(fields: [variant_id], references: [id], onUpdate: NoAction)
+
+  @@index([order_id], map: "idx_order_items_order_id")
+  @@map("order_items")
+}
+
+model tables {
+  id                 String               @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  table_id           String               @unique @db.VarChar
+  table_number       Int                  @unique
+  capacity           Int
+  x_position         Int?
+  y_position         Int?
+  status             String?              @default("available") @db.VarChar
+  created_at         DateTime?            @default(now()) @db.Timestamptz(6)
+  orders             orders[]
+  table_reservations table_reservations[]
+
+  @@index([status], map: "idx_tables_status")
+  @@map("tables")
+}
+
+model ingredients {
+  id                       String                     @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  ingredient_id            String                     @unique @db.VarChar
+  name                     String                     @db.VarChar
+  unit                     String                     @db.VarChar
+  min_stock_alert          Decimal?                   @db.Decimal(10, 3)
+  cost_per_unit            Decimal?                   @db.Decimal(10, 2)
+  supplier                 String?                    @db.VarChar
+  created_at               DateTime?                  @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime?                  @default(now()) @db.Timestamptz(6)
+  deleted_at               DateTime?                  @db.Timestamptz(6)
+  stock_history            ingredient_stock_history[]
+  ingredient_usage_history ingredient_usage_history[]
+  menu_item_ingredients    menu_item_ingredients[]
+
+  @@index([name(ops: raw("gin_trgm_ops"))], map: "idx_ingredients_name", type: Gin)
+  @@map("ingredients")
+}
+
+model ingredient_stock_history {
+  id            String       @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  ingredient_id String?      @db.Uuid
+  movement_type String       @db.VarChar
+  quantity      Decimal?     @db.Decimal(10, 3)
+  reference_id  String?      @db.Uuid
+  notes         String?
+  timestamp     DateTime?    @default(now()) @db.Timestamptz(6)
+  ingredient    ingredients? @relation(fields: [ingredient_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("ingredient_stock_history")
+}
+
+model menu_item_ingredients {
+  id                   String       @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  recipe_id            String       @unique @db.VarChar
+  menu_item_id         String?      @db.Uuid
+  ingredient_id        String?      @db.Uuid
+  quantity_per_serving Decimal      @db.Decimal(10, 3)
+  unit                 String       @db.VarChar
+  created_at           DateTime?    @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?    @default(now()) @db.Timestamptz(6)
+  deleted_at           DateTime?    @db.Timestamptz(6)
+  ingredient           ingredients? @relation(fields: [ingredient_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  menu_item            menu_items?  @relation(fields: [menu_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("menu_item_ingredients")
+}
+
+model menu_item_images {
+  id           String      @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  image_id     String      @unique @db.VarChar
+  menu_item_id String?     @db.Uuid
+  image_url    String      @db.VarChar
+  image_order  Int?        @default(1)
+  alt_text     String?     @db.VarChar
+  created_at   DateTime?   @default(now()) @db.Timestamptz(6)
+  menu_item    menu_items? @relation(fields: [menu_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("menu_item_images")
+}
+
+model menu_item_categories {
+  id           String      @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  menu_item_id String?     @db.Uuid
+  category_id  String?     @db.Uuid
+  created_at   DateTime?   @default(now()) @db.Timestamptz(6)
+  category     categories? @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  menu_item    menu_items? @relation(fields: [menu_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([menu_item_id, category_id])
+  @@map("menu_item_categories")
+}
+
+model order_timeline {
+  id          String    @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  order_id    String?   @db.Uuid
+  status      String    @db.VarChar
+  message     String?
+  employee_id String?   @db.Uuid
+  timestamp   DateTime? @default(now()) @db.Timestamptz(6)
+  employee    users?    @relation(fields: [employee_id], references: [id], onUpdate: NoAction)
+  order       orders?   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("order_timeline")
+}
+
+model ingredient_usage_history {
+  id            String       @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  order_item_id String?      @db.Uuid
+  ingredient_id String?      @db.Uuid
+  quantity_used Decimal      @db.Decimal(10, 3)
+  unit          String       @db.VarChar
+  used_at       DateTime?    @default(now()) @db.Timestamptz(6)
+  ingredient    ingredients? @relation(fields: [ingredient_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  order_item    order_items? @relation(fields: [order_item_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("ingredient_usage_history")
+}
+
+model transactions {
+  id             String    @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  transaction_id String    @unique @db.VarChar
+  order_id       String?   @db.Uuid
+  amount         Decimal   @db.Decimal(10, 2)
+  payment_method String?   @db.VarChar
+  status         String?   @default("pending") @db.VarChar
+  processed_at   DateTime? @db.Timestamptz(6)
+  created_at     DateTime? @default(now()) @db.Timestamptz(6)
+  order          orders?   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("transactions")
+}
+
+model operation_days {
+  id          String    @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  date        DateTime  @unique @db.Date
+  shift_start DateTime? @db.Timestamptz(6)
+  shift_end   DateTime? @db.Timestamptz(6)
+  status      String?   @default("open") @db.VarChar
+
+  @@map("operation_days")
+}
+
+model table_reservations {
+  id             String    @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  reservation_id String    @unique @db.VarChar
+  table_id       String?   @db.Uuid
+  customer_name  String    @db.VarChar
+  customer_phone String?   @db.VarChar
+  reserved_time  DateTime  @db.Timestamptz(6)
+  party_size     Int
+  status         String?   @default("pending") @db.VarChar
+  timeout_at     DateTime? @db.Timestamptz(6)
+  notes          String?
+  created_at     DateTime? @default(now()) @db.Timestamptz(6)
+  table          tables?   @relation(fields: [table_id], references: [id], onUpdate: NoAction)
+
+  @@map("table_reservations")
+}
+
+model refresh_tokens {
+  id          String    @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  user_id     String    @db.Uuid
+  token       String    @unique @db.VarChar
+  expires_at  DateTime  @db.Timestamptz(6)
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  revoked_at  DateTime? @db.Timestamptz(6)
+  device_info String?   @db.VarChar
+  ip_address  String?   @db.Inet
+  
+  // Relationships
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  
+  @@index([user_id], map: "idx_refresh_tokens_user_id")
+  @@index([token], map: "idx_refresh_tokens_token")
+  @@map("refresh_tokens")
+}

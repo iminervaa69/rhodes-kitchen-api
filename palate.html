@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Palettes - Light & Dark Mode</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #2d3748;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        .palette-section {
+            margin-bottom: 4rem;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .palette-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .palette-section.dark {
+            background: #1a202c;
+            color: white;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        .colors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .color-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .color-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .color-swatch {
+            height: 120px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-info {
+            background: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .dark .color-info {
+            background: #2d3748;
+            color: white;
+        }
+
+        .color-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .color-hex {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            background: #f7fafc;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .dark .color-hex {
+            background: #4a5568;
+        }
+
+        .usage-guide {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .dark .usage-guide {
+            background: #2d3748;
+        }
+
+        .usage-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        .dark .usage-title {
+            color: #e2e8f0;
+        }
+
+        .usage-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #718096;
+        }
+
+        .dark .usage-text {
+            color: #a0aec0;
+        }
+
+                /* Primary Colors */
+        .primary-1 { background: linear-gradient(135deg, #C0FF23, #C0FF23); }
+        .primary-2 { background: linear-gradient(135deg, #00FB41, #00FB41); }
+        .primary-3 { background: linear-gradient(135deg, #A1FB34, #A1FB34); }
+        .primary-4 { background: linear-gradient(135deg, #84C322, #84C322); }
+        .primary-5 { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .primary-6 { background: linear-gradient(135deg, #a3e635, #84cc16); }
+        .primary-7 { background: linear-gradient(135deg, #FAF451, #EAD313); }
+        .primary-8 { background: linear-gradient(135deg, #FBFF88, #FBFF88); }
+        .primary-9 { background: linear-gradient(135deg, #D8F8CC, #D8F8CC); }
+        .primary-10 { background: linear-gradient(135deg, #BDF8B1, #BDF8B1); }
+        /* .primary-11 { background: linear-gradient(135deg, #E8FFB3, #E8FFB3); }
+        .primary-12 { background: linear-gradient(135deg, #D8EDA8, #D8EDA8); } */
+
+        /* Dark Mode Colors */
+        .dark-1 { background: linear-gradient(135deg, #1e293b, #0f172a); }
+        .dark-2 { background: linear-gradient(135deg, #374151, #1f2937); }
+        .dark-3 { background: linear-gradient(135deg, #10b981, #10b981); }
+        .dark-4 { background: linear-gradient(135deg, #d8f8cc, #d8f8cc); }
+        .dark-5 { background: linear-gradient(135deg, #bdf8b1, #bdf8b1); }
+        .dark-6 { background: linear-gradient(135deg, #22c55e, #22c55e); }
+        .dark-7 { background: linear-gradient(135deg, #84cc16, #84cc16); }
+        .dark-8 { background: linear-gradient(135deg, #fbbf24, #fbbf24); }
+        .dark-9 { background: linear-gradient(135deg, #faf451, #faf451); }
+
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            transform: translateX(300px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .copy-notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="copy-notification" id="copyNotification">
+        Color copied to clipboard! 📋
+    </div>
+
+    <div class="container">
+        <h1>Color Palettes Inspired by "The Dash"</h1>
+        
+        <!-- Light Mode Palette -->
+        <div class="palette-section">
+            <h2 class="section-title">Light Mode Palette</h2>
+            <div class="colors-grid">
+                <div class="color-card" onclick="copyColor('#84cc16')">
+                    <div class="color-swatch primary-1"></div>
+                    <div class="color-info">
+                        <div class="color-name">Fresh Green</div>
+                        <div class="color-hex">#84cc16</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#eab308')">
+                    <div class="color-swatch primary-2"></div>
+                    <div class="color-info">
+                        <div class="color-name">Extra Light Lime</div>
+                        <div class="color-hex">#eab308</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#22c55e')">
+                    <div class="color-swatch primary-3"></div>
+                    <div class="color-info">
+                        <div class="color-name">Vibrant Lime</div>
+                        <div class="color-hex">#22c55e</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#a3e635')">
+                    <div class="color-swatch primary-4"></div>
+                    <div class="color-info">
+                        <div class="color-name">Deep Lime</div>
+                        <div class="color-hex">#a3e635</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#facc15')">
+                    <div class="color-swatch primary-5"></div>
+                    <div class="color-info">
+                        <div class="color-name">Electric Green</div>
+                        <div class="color-hex">#facc15</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#C0FF23')">
+                    <div class="color-swatch primary-6"></div>
+                    <div class="color-info">
+                        <div class="color-name">Electric Chartreuse</div>
+                        <div class="color-hex">#C0FF23</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#FAF451')">
+                    <div class="color-swatch primary-7"></div>
+                    <div class="color-info">
+                        <div class="color-name">Pale Gold</div>
+                        <div class="color-hex">#FAF451</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#00FF3D')">
+                    <div class="color-swatch primary-8"></div>
+                    <div class="color-info">
+                        <div class="color-name">Neon Yellow</div>
+                        <div class="color-hex">#00FF3D</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#D8F8CC')">
+                    <div class="color-swatch primary-9"></div>
+                    <div class="color-info">
+                        <div class="color-name">Pale Mint</div>
+                        <div class="color-hex">#D8F8CC</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#A1FB34')">
+                    <div class="color-swatch primary-10"></div>
+                    <div class="color-info">
+                        <div class="color-name">Deep Mint</div>
+                        <div class="color-hex">#A1FB34</div>
+                    </div>
+                </div>
+            </div>
+            <div class="usage-guide">
+                <div class="usage-title">Light Mode Usage</div>
+                <div class="usage-text">
+                    Primary actions and CTAs: Vibrant Lime (#84cc16) • 
+                    Accent elements: Golden Yellow (#eab308) • 
+                    Success states: Fresh Green (#22c55e) • 
+                    Highlights: Light Lime (#a3e635) • 
+                    Warning states: Bright Amber (#facc15) •
+                    High-energy accents: Electric Chartreuse (#C0FF23), Neon Yellow (#FAF451), Electric Green (#00FF3D) •
+                    Subtle backgrounds: Pale Mint (#D8F8CC)
+                </div>
+            </div>
+        </div>
+
+        <!-- Dark Mode Palette -->
+        <div class="palette-section dark">
+            <h2 class="section-title">Dark Mode Palette</h2>
+            <div class="colors-grid">
+                <div class="color-card" onclick="copyColor('#1e293b')">
+                    <div class="color-swatch dark-1"></div>
+                    <div class="color-info">
+                        <div class="color-name">Deep Slate</div>
+                        <div class="color-hex">#1e293b</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#374151')">
+                    <div class="color-swatch dark-2"></div>
+                    <div class="color-info">
+                        <div class="color-name">Charcoal Gray</div>
+                        <div class="color-hex">#374151</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#84cc16')">
+                    <div class="color-swatch dark-3"></div>
+                    <div class="color-info">
+                        <div class="color-name">Electric Lime</div>
+                        <div class="color-hex">#84cc16</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#fbbf24')">
+                    <div class="color-swatch dark-4"></div>
+                    <div class="color-info">
+                        <div class="color-name">Paler Mint</div>
+                        <div class="color-hex">#fbbf24</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#10b981')">
+                    <div class="color-swatch dark-5"></div>
+                    <div class="color-info">
+                        <div class="color-name">Not so pale Mint</div>
+                        <div class="color-hex">#10b981</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#ffffff')">
+                    <div class="color-swatch dark-6"></div>
+                    <div class="color-info">
+                        <div class="color-name">Electric Chartreuse</div>
+                        <div class="color-hex">#ffffff</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#000000')">
+                    <div class="color-swatch dark-7"></div>
+                    <div class="color-info">
+                        <div class="color-name">Lime</div>
+                        <div class="color-hex">#000000</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#22c55e')">
+                    <div class="color-swatch dark-8"></div>
+                    <div class="color-info">
+                        <div class="color-name">Deed Gold</div>
+                        <div class="color-hex">#22c55e</div>
+                    </div>
+                </div>
+                <div class="color-card" onclick="copyColor('#faf451')">
+                    <div class="color-swatch dark-9"></div>
+                    <div class="color-info">
+                        <div class="color-name">Neon Yellow</div>
+                        <div class="color-hex">#faf451</div>
+                    </div>
+                </div>
+            </div>
+            <div class="usage-guide">
+                <div class="usage-title">Dark Mode Usage</div>
+                <div class="usage-text">
+                    Background: Deep Slate (#1e293b) • 
+                    Cards/Surfaces: Charcoal Gray (#374151) • 
+                    Primary actions: Electric Lime (#84cc16) • 
+                    Accent elements: Warm Gold (#fbbf24) • 
+                    Success states: Emerald Green (#10b981) •
+                    Text: Pure White (#ffffff) • 
+                    Deep contrast: Pure Black (#000000) •
+                    Bright accents: Neon Yellow (#FAF451)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyColor(color) {
+            navigator.clipboard.writeText(color).then(function() {
+                showCopyNotification();
+            });
+        }
+
+        function showCopyNotification() {
+            const notification = document.getElementById('copyNotification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+        // Add some interactive animations
+        document.querySelectorAll('.color-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05) rotate(1deg)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+    </script>
+</body>
+</html>
