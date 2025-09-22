@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { setCookie } from 'cookies-next';
-import { registerUser } from '../../../lib/auth/authService';
-import { getClientInfo } from '../../../lib/utils/clientInfo';
-import { ApiResponse } from '../../../lib/types/api.types';
+import { registerUser } from '@/lib/services/authService';
+import { getClientInfo } from '@/utils/clientInfo';
+import { ApiResponse } from '@/types/api.types';
 
 export default async function handler(
   req: NextApiRequest,
@@ -50,7 +50,7 @@ export default async function handler(
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
+      maxAge: 7 * 24 * 60 * 60, 
       path: '/'
     });
     

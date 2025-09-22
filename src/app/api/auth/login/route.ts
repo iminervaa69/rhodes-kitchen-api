@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { setCookie } from 'cookies-next';
-import { loginUser } from '../../../lib/auth/authService';
-import { getClientInfo } from '../../../lib/utils/clientInfo';
-import { ApiResponse } from '../../../lib/types/api.types';
+import { loginUser } from '@/lib/services/authService';
+import { getClientInfo } from '@/utils/clientInfo';
+import { ApiResponse } from '@/types/api.types';
 
 export default async function handler(
   req: NextApiRequest,

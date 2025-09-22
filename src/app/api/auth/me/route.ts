@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next';
-import { withAuth } from '../../../lib/auth/middleware';
-import { AuthenticatedNextApiRequest, ApiResponse } from '../../../lib/types/api.types';
+import { withAuth } from '@/lib/middlewares/middleware';
+import { AuthenticatedNextApiRequest, ApiResponse } from '@/types/api.types';
 
 export default withAuth(async function handler(
   req: AuthenticatedNextApiRequest,

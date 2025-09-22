@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { query } from '../database/connection';
-import { JWTPayload } from '../types/auth.types';
-import { User } from '../types/user.types';
+import { query } from '@/lib/database/connection';
+import { JWTPayload } from '@/types/auth.types';
+import { User } from '@/types/user.types';
 import ms from 'ms';
 
 const JWT_SECRET = process.env.JWT_SECRET!;

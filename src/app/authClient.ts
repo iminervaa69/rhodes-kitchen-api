@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { UserResponse, RegisterUserData } from '../../lib/types/user.types';
-import { AuthResponse } from '../../lib/types/auth.types';
+import { UserResponse, RegisterUserData } from '@/types/user.types';
+import { AuthResponse } from '@/types/auth.types';
 
 // API response wrapper types
 interface ApiResponse<T> {

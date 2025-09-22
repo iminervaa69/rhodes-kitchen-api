@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { verifyAccessToken } from './tokenService';
-import { AuthenticatedNextApiRequest, ApiResponse } from '../types/api.types';
+import { verifyAccessToken } from '@/lib/services/tokenService';
+import { AuthenticatedNextApiRequest, ApiResponse } from '@/types/api.types';
 
 export function withAuth(
   handler: (req: AuthenticatedNextApiRequest, res: NextApiResponse) => Promise<void>

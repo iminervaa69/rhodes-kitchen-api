@@ -1,0 +1,43 @@
+rhodes-kitchen-api/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── categories/
+│   │   │       ├── route.ts                    # GET /api/categories, POST /api/categories
+│   │   │       ├── [id]/
+│   │   │       │   └── route.ts                # GET/PUT/DELETE /api/categories/[id]
+│   │   │       ├── stats/
+│   │   │       │   └── route.ts                # GET /api/categories/stats
+│   │   │       └── reorder/
+│   │   │           └── route.ts                # POST /api/categories/reorder
+│   │   └── (dashboard)/
+│   │       └── categories/
+│   │           ├── page.tsx                    # Categories list page
+│   │           ├── create/
+│   │           │   └── page.tsx                # Create category page
+│   │           └── [id]/
+│   │               └── edit/
+│   │                   └── page.tsx            # Edit category page
+│   ├── lib/
+│   │   ├── database/
+│   │   │   └── connection.ts                   # Database connection
+│   │   └── services/
+│   │       ├── authService.ts                  # Your existing auth service
+│   │       ├── tokenService.ts                 # Your existing token service
+│   │       └── categoryService.ts              # Your new category CRUD service
+│   ├── types/
+│   │   ├── auth.types.ts                       # Your existing auth types
+│   │   ├── user.types.ts                       # Your existing user types
+│   │   └── category.types.ts                   # Category-specific types
+│   ├── components/
+│   │   └── categories/
+│   │       ├── CategoryList.tsx                # List component
+│   │       ├── CategoryForm.tsx                # Create/Edit form
+│   │       ├── CategoryCard.tsx                # Individual category display
+│   │       └── CategoryFilters.tsx             # Search/filter component
+│   └── utils/
+│       ├── password.ts                         # Your existing password utils
+│       └── validation.ts                       # Form validation helpers
+├── .env.local                                  # Environment variables
+├── next.config.js
+└── package.json

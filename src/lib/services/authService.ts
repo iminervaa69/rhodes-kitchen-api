@@ -1,7 +1,7 @@
 import { query } from '../database/connection';
-import { User, UserResponse, RegisterUserData } from '../types/user.types';
-import { AuthResponse, TokenPair, ClientInfo } from '../types/auth.types';
-import { hashPassword, comparePassword } from '../utils/password';
+import { User, UserResponse, RegisterUserData } from '@/types/user.types';
+import { AuthResponse, TokenPair, ClientInfo } from '@/types/auth.types';
+import { hashPassword, comparePassword } from '@/utils/password';
 import { generateAccessToken, generateRefreshToken, storeRefreshToken, validateRefreshToken, revokeRefreshToken } from './tokenService';
 
 export async function registerUser(userData: RegisterUserData, clientInfo?: ClientInfo): Promise<AuthResponse> {
